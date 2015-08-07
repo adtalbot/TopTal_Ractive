@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SEARCH PROJECT</title>
+    <link rel='stylesheet' href='ttps://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css'>
+  </head>
+  <body>
+    <div class='container'>
+      <h1>SEARCH PROJECT</h1>
+
+<!-- This is the HTML element that will receive the data -->
+      <div id='root'></div>
+    </div>
+
+<!-- This is the template code -->
+    <script type='text/html' id='tpl-app'>
+<!-- Partial -->
+      {{#partial skillsList}}
+<!-- This is the search box -->
+<!-- The code value='{{ skillFilter }} binds the variable skillFilter to the value attribute of the input' -->
+        <div class='row'>
+          <form class='form-horizontal col-xs-6 col-xs-offset-6'>
+            <input type='search' class='form-control' value='{{ skillFilter }}' placeholder='Type part of the skill name here'>
+          </form>
+        </div>
+        <hr>
+
+<!-- Instead of displaying all skills, we invoke a to be created javascript skills() function that will filter the skill list down to those that match the text entered by the user -->
+<!-- Use to iterate through the skills array -->
+<!-- Inside of this directive, the current element can be accessed by the THIS keyword -->
+        <div class='row'>
+          {{#each skills}}
+            <span class='col-xs-3'>
+<!-- Makes our skills clickable, using proxy events -->
+              <a href='#' class='label label-primary' on-click='select-skill:{{this}}'>{{this}}</a>
+            </span>
+          {{/each}}
+        </div>
+      {{/partial}}
+
+      {{#partial skillView}}
+      <h2>
+<!-- Displays selected skill as heading on the page -->
+        {{ currentSkill }}
+<!-- Close button takes user back to skills list -->
+        <button type='button' class='close pull-right' on-click='deselect-skill'>&times; CLOSE</button>
+      </h2>
+
+<!-- Iterates over the result of the skillDevelopers function -->
+<!-- For each developer in the array returned by the skillDevelopers function, we render a panel and display the developer's name -->
+        {{#each skillDevelopers(currentSkill)}}
+          <div class='panel panel-default'>
+            <div class='panel-body media'>
+              <div class='media-left'>
+<!-- Add the photo -->
+                <img class='media-object img-circle' width='64' height='64' src='{{ this.photo }}' alt='{{ this.name }}'>
+              </div>
+              <div class='media-body'>
+<!-- Make the developer's name a hyperlink to their profile -->
+              <a class='h4 media-heading' href='{{ this.url }}' target='_blank'>{{ this.name }}</a>
+<!-- Add more details from their profile -->
+              <p>{{ this.desc}}</p>
+              <p>
+                {{#each this.skills}}
+                  {{> skill}}&nbsp;
+                {{/each}}
+              </p>
+            </div>
+          </div>
+        {{/each}}
+      {{/partial}}
+<!-- Partials are not in the view until we explicitly include them -->
+
+      {{#if currentSkill}}
+        {{> skillView}}
+      {{else}}
+        {{> skillsList}}
+      {{/if}}
+    </script>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.9.3/lodash.min.js'></script>
+    <script src='ttps://cdnjs.cloudflare.com/ajax/libs/ractive/0.7.3/ractive.min.js'></script>
+
+    <script src='https://rawgit.com/emirotin/toptal-blog-ractive/master/data.js'></script>
+
+    <script src='script.js'></script>
+  </body>
+</html>
